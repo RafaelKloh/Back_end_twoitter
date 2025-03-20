@@ -26,19 +26,20 @@ class Post_service
                 'image_post' => $data['image_post'] ?? '',
                 'posted_at' => $data['posted_at'] ?? ''
             ]);
-    
+            
+            $fields['tags'] = isset($data['tags']) && is_array($data['tags']) ? $data['tags'] : [];
+
             $post = Post_model::create($user_from_JWT['id'], $fields);
 
     
             if (!$post) {
-                return ['error' => 'Sorry, we could not create your account.'];
+                return ['error' => 'Sorry, we could not create your post.'];
             }
     
             return "Post created successfully!";
         } 
         catch (PDOException $e) {
             if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
-            if($e->getCode() === '23000') return ['error' => 'Sorry, user already exists.'];
             return ['error' => $e->getCode()];
         }
         catch (Exception $e) {
@@ -46,4 +47,106 @@ class Post_service
         }
     }
 
+    public static function fetch(mixed $authorization, string $search)
+    {
+        try {
+
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+            if($search === "") return ['error' => 'Please enter a valid text to search'];
+
+            $post = Post_model::find($search);
+
+            if(!$post) return ['error' => 'Sorry, we could not find a post with this text.'];
+
+            return $post;
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public static function fetch_tag(mixed $authorization, string $search)
+    {
+        try {
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+            if($search === "") return ['error' => 'Please enter a valid tag to search'];
+
+            $post = Post_model::find_tag($search);
+
+            if(!$post) return ['error' => 'Sorry, we could not find a post with this tag.'];
+
+            return $post;
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public static function update(mixed $authorization, array $data)
+    {
+        try {
+            if(isset($authorization['error'])) return ['error' => $authorization['error']];
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if (!$user_from_JWT) return ['error' => 'Please login to access this resource.'];
+
+            $post = Post_model::update($data);
+            
+
+            if(!$post) return ['error' => 'Sorry, we could not update your post.'];
+
+            return "Post update succesfully.";
+
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
+    
+    public static function delete(mixed $authorization, array $data)
+    {
+        try {
+            if(isset($authorization['error'])) return ['error' => $authorization['error']];
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if (!$user_from_JWT) return ['error' => 'Please login to access this resource.'];
+
+            $post = Post_model::delete($data);
+
+
+            if(!$post) return ['error' => 'Sorry, we could not update your account.'];
+
+            return "Post deleted succesfully.";
+
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
 }

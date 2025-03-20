@@ -30,28 +30,100 @@ class Post_controller
         ], 201);
     }
 
+    
+
+
     public function fetch(Request $request, Response $response)
     {
         $authorization = $request::authorization();
         $body = $request::body();
-        $name = $body['name'] ?? '';
+        $search = $body['search'] ?? '';
 
-        $user_services = User_service::fetch($authorization,$name);
+        $post_service = Post_service::fetch($authorization,$search);
 
-        if(isset($user_services['error'])){
+        if(isset($post_service['error'])){
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'mesage' => $post_service['error']
             ],400);
         }
 
         $response::json([
             'error' => false,
             'success' => true,
-            'jwt' => $user_services
+            'jwt' => $post_service
         ], 200);
         return;
     }
+
+    public function fetch_tag(Request $request, Response $response)
+    {
+        $authorization = $request::authorization();
+        $body = $request::body();
+        $search = $body['search'] ?? '';
+
+        $post_service = Post_service::fetch_tag($authorization,$search);
+
+        if(isset($post_service['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'mesage' => $post_service['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'jwt' => $post_service
+        ], 200);
+        return;
+    }
+
+    public function update(Request $request, Response $response)
+    {
+        $authorization = $request::authorization();
+        $body = $request::body();
+        $post_service = Post_service::update($authorization, $body);
+
+        if(isset($post_service['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'mesage' => $post_service['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'message' => $post_service
+        ], 200);
+        return;
+    }
+
+    public function delete(Request $request, Response $response)
+    {
+        $authorization = $request::authorization();
+        $body = $request::body();
+        $post_service = Post_service::delete($authorization,$body);
+
+        if(isset($post_service['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'mesage' => $post_service['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'message' => $post_service
+        ], 200);
+        return;
+    }
+
 
 }
