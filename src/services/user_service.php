@@ -145,4 +145,59 @@ class User_service
             return ['error' => $e->getMessage()];
         }
     }
+
+    public static function register_follower(mixed $authorization, array $data)
+    {
+        try {
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+
+            $fields = Validator::validate([
+                'user_followed_id' => $data['user_followed_id'] ?? '',
+                'followed_at' => $data['followed_at'] ?? ''
+            ]);
+
+            $user = User_model::register_follower($user_from_JWT['id'],$fields);
+
+            if(!$user) return ['error' => 'Sorry, we could not follow this user'];
+
+            return "User followed successfully!";
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public static function get_info(mixed $authorization)
+    {
+        try {
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+
+            $user = User_model::get_info($user_from_JWT['id']);
+
+            if(!$user) return ['error' => 'Sorry, we could not follow this user'];
+
+            return $user;
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
 }

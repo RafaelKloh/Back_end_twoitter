@@ -125,5 +125,45 @@ class Post_controller
         return;
     }
 
+    public function create_comment(Request $request, Response $response)
+    {
+        $authorization = $request::authorization();
+        $body = $request::body();
+        $post_service = Post_service::create_comment($authorization,$body);
 
+        if(isset($post_service['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'mesage' => $post_service['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'data' => $post_service
+        ], 201);
+    }
+
+    public function register_like(Request $request, Response $response)
+    {
+        $authorization = $request::authorization();
+        $body = $request::body();
+        $post_service = Post_service::register_like($authorization,$body);
+
+        if(isset($post_service['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'mesage' => $post_service['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'data' => $post_service
+        ], 201);
+    }
 }

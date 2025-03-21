@@ -118,4 +118,45 @@ class User_controller
         ], 200);
         return;
     }
+
+    public function register_follower(Request $request, Response $response)
+    {
+        $body = $request::body();
+        $authorization = $request::authorization();
+        $user_services = User_service::register_follower($authorization,$body);
+
+        if(isset($user_services['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'mesage' => $user_services['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'data' => $user_services
+        ], 201);
+    }
+
+    public function get_info(Request $request, Response $response)
+    {
+        $authorization = $request::authorization();
+        $user_services = User_service::get_info($authorization);
+
+        if(isset($user_services['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'mesage' => $user_services['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'data' => $user_services
+        ], 201);
+    }
 }

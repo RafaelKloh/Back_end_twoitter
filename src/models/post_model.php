@@ -126,4 +126,69 @@ Class Post_model extends Database
         return $stmt->rowCount() > 0 ? true : false;
 
     }
+
+    public static function create_comment(int|string $id, array $data){
+        $pdo = self::get_connection();
+
+        $stmt1 = $pdo->prepare('INSERT INTO comment (post_id,user_id,comment,commented_at)
+        VALUES (?,?,?,?)');
+
+        $stmt1->execute([
+            $data['post_id'],
+            $id,
+            $data['comment'],
+            $data['commented_at']
+        ]);
+        //se conseguiu inserir o comentario manda a notificação
+        if ($stmt1->rowCount() > 0) {
+            $stmt2 = $pdo->prepare('INSERT INTO `notification` (type_notification, user_id, notification_message, notification_at, notification_read)
+            VALUES (?, ?, ?, ?, ?)');
+               $stmt2->execute([
+                "new_comment",
+                $data['user_post_commented_id'],
+                "You have a newe comment on your post",
+                $data['commented_at'],
+                0
+                ]);
+                return "Notification generated";
+            }
+
+        return $pdo->lastInsertId() > 0 ? true : false;
+    }
+
+    public static function register_like(int|string $id, array $data){
+        $pdo = self::get_connection();
+
+        $stmt1 = $pdo->prepare('SELECT post_id,user_id FROM `like` WHERE post_id = ? and user_id = ?');
+        $stmt1->execute([
+            $data['post_id'],
+            $id]);
+        $tanned = $stmt1->fetchColumn();
+
+        if($tanned){
+        return false;
+        }
+            $stmt2 = $pdo->prepare('INSERT INTO `like` (post_id,user_id,liked_at)
+            VALUES (?,?,?)');
+    
+            $stmt2->execute([
+                $data['post_id'],
+                $id,
+                $data['liked_at']
+            ]);
+            $resp = $pdo->lastInsertId();
+
+        if ($stmt2->rowCount() > 0) {
+            $stmt3 = $pdo->prepare('INSERT INTO `notification` (type_notification, user_id, notification_message, notification_at, notification_read)
+            VALUES (?, ?, ?, ?, ?)');
+               $stmt3->execute([
+                "new_like",
+                $data['user_post_liked_id'],
+                "You have a newe like on your post",
+                $data['liked_at'],
+                0
+                ]);
+                return "Notification generated";
+            }
+    }
 }

@@ -88,4 +88,60 @@ Class User_model extends Database
         return $stmt->rowCount() > 0 ? true : false;
 
     }
+
+    public static function register_follower(int|string $id, array $data)
+{
+        $pdo = self::get_connection();
+
+        // Verifica se o usuário já segue o outro
+        $stmt1 = $pdo->prepare('SELECT user_follower_id FROM follower WHERE user_follower_id = ? AND user_followed_id = ?');
+        $stmt1->execute([
+            $id, 
+            $data['user_followed_id']
+        ]);
+        $following = $stmt1->fetchColumn();
+
+        if ($following) {
+            return false;
+        }
+
+        // Se não seguia, faz o insert
+        $stmt2 = $pdo->prepare('INSERT INTO follower (user_follower_id, user_followed_id, followed_at) VALUES (?, ?, ?)');
+        $stmt2->execute([
+            $id,
+            $data['user_followed_id'],
+            $data['followed_at']
+        ]);
+
+        // Verifica se conseguiu inserir o usuario e se conseguiu manda a notificação
+        if ($stmt2->rowCount() > 0) {
+            $stmt3 = $pdo->prepare('INSERT INTO `notification` (type_notification, user_id, notification_message, notification_at, notification_read)
+            VALUES (?, ?, ?, ?, ?)');
+            $stmt3->execute([
+                "new_follower",
+                $data['user_followed_id'],
+                "You have a new follower!",
+                $data['followed_at'],
+                0
+            ]);
+            return "Notification generated";
+        }
+
+        return false;
+    }
+
+public static function get_info(int|string $id)
+    {
+        $pdo = self::get_connection();
+
+        $stmt = $pdo->prepare('
+            SELECT * FROM user WHERE user_id = ?
+        ');
+
+        $stmt->execute([$id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+
+    }
+
 }

@@ -149,4 +149,76 @@ class Post_service
             return ['error' => $e->getMessage()];
         }
     }
+
+    public static function create_comment(mixed $authorization,array $data)
+    {
+        try {
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+
+            $fields = Validator::validate([
+                'post_id' => $data['post_id'] ?? '',
+                'comment' => $data['comment'] ?? '',
+                'commented_at' => $data['commented_at'] ?? '',
+                'user_post_commented_id' => $data['user_post_commented_id'] ?? ''
+            ]);
+            
+            $post = Post_model::create_comment($user_from_JWT['id'], $fields);
+
+    
+            if (!$post) {
+                return ['error' => 'Sorry, we could not register your comment.'];
+            }
+    
+            return "Comment registered successfully!";
+        } 
+        catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+            return ['error' => $e->getCode()];
+        }
+        catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    public static function register_like(mixed $authorization,array $data)
+    {
+        try {
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+
+            
+            $fields = Validator::validate([
+                'post_id' => $data['post_id'] ?? '',
+                'liked_at' => $data['liked_at'] ?? '',
+                'user_post_liked_id' => $data['user_post_liked_id'] ?? ''
+            ]);
+            
+            $post = Post_model::register_like($user_from_JWT['id'], $fields);
+
+            
+            if (!$post) {
+                return ['error' => 'Sorry, we could not register your like.'];
+            }
+    
+            return "Like registered successfully!";
+        } 
+        catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+            return ['error' => $e->getCode()];
+        }
+        catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
 }
