@@ -31,6 +31,12 @@ Class Request{
         return $authorizationPartials[1] ?? '';
     }
 
+    public static function all()
+{
+    return json_decode(file_get_contents('php://input'), true) ?? [];
+}
+
+
 
 
 }

@@ -17,6 +17,7 @@ class User_service
                 'name' => $data['name'] ?? '',
                 'email' => $data['email'] ?? '',
                 'password' => $data['password'] ?? '',
+                'sex' => $data['sex'] ?? '',
                 'profile_picture_url'=> $data['profile_picture_url'] ?? '',
                 'bio' => $data['bio'] ?? '',
                 'user_birth_date' => $data['user_birth_date'] ?? '',
@@ -24,14 +25,20 @@ class User_service
             ]);
 
             $fields['password'] = password_hash($fields['password'], PASSWORD_DEFAULT);
+
+
+            //gera o codigo de verificação aleatório pra api
+            $verification_code = rand(100000, 999999);
     
-            $user = User_model::save($fields);
+            $user = User_model::save($fields, $verification_code);
     
             if (!$user) {
                 return ['error' => 'Sorry, we could not create your account.'];
             }
+
+            Mail_service::sendVerificationEmail($fields['email'], $verification_code);
     
-            return "User created successfully!";
+            return "User created successfully! Please check your email to verify your account.";
         } 
         catch (PDOException $e) {
             if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
@@ -42,6 +49,29 @@ class User_service
             return ['error' => $e->getMessage()];
         }
     }
+
+    public static function verifyEmail(array $data)
+    {
+        try {
+            $fields = Validator::validate([
+                'email' => $data['email'] ?? '',
+                'verification_code' => $data['verification_code'] ?? ''
+            ]);
+
+            $user = User_model::findByEmail($fields['email']);
+
+            if (!$user || !$user['verification_code'] || $user['verification_code'] !== $fields['verification_code']) {
+                return ['error' => 'Invalid verification code.'];
+            }
+            
+            User_model::update_code($user['user_id']);
+
+            return "Email verified successfully!";
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
     
 
     public static function auth(array $data)
@@ -55,6 +85,10 @@ class User_service
             $user = User_model::authentication($fields);
 
             if(!$user) return ['error' => 'Sorry, we could not authenticate you.'];
+
+            if($user['verification_code'] !== null){
+                return ['error' => 'Unverified user, check your email and validate your account.'];
+            }
 
             return JWT::generate($user);
         } catch (PDOException $e) {

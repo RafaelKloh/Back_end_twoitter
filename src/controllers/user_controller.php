@@ -30,6 +30,17 @@ class User_controller
         ], 201);
     }
 
+    public function verifyEmail(Request $request)
+{
+    header('Content-Type: application/json');
+    echo json_encode(User_service::verifyEmail($request->all()));
+    exit;
+}
+
+    
+    
+
+
     public function login(Request $request, Response $response)
     {
         

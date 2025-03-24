@@ -6,25 +6,53 @@ use App\Models\Database;
 use PDO;
 Class User_model extends Database
 {
-    public static function save(array $data){
+    public static function save(array $data, int|string $verification_code){
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare("
-            INSERT INTO user (name,email,password,profile_picture_url,bio,user_birth_date,user_creation_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO user (name,email,password,sex,profile_picture_url,bio,user_birth_date,user_creation_date,verification_code)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $stmt->execute([
             $data['name'],
             $data['email'],
             $data['password'],
+            $data['sex'],
             $data['profile_picture_url'],
             $data['bio'],
             $data['user_birth_date'],
-            $data['user_creation_date']
+            $data['user_creation_date'],
+            $verification_code
         ]);
 
         return $pdo->lastInsertId() > 0 ? true : false;
+    }
+
+    public static function findByEmail($email)
+    {
+        $pdo = self::get_connection();
+
+        $stmt = $pdo->prepare('
+            SELECT * FROM user WHERE email = ?
+        ');
+
+        $stmt->execute([$email]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public static function update_code($id)
+    {
+        $pdo = self::get_connection();
+
+        $stmt = $pdo->prepare('
+           UPDATE user SET verification_code = NULL WHERE user_id = ?;
+        ');
+
+        $stmt->execute([$id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public static function authentication(array $data)
@@ -45,7 +73,8 @@ Class User_model extends Database
         return [
             'id' => $user['user_id'],
             'name' => $user['name'],
-            'email' => $user['email']
+            'email' => $user['email'],
+            'verification_code' =>['verification_code']
         ];
     }
 
