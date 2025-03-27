@@ -19,7 +19,7 @@ class User_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'message' => $user_services['error']
             ],400);
         }
 
@@ -51,7 +51,7 @@ class User_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'message' => $user_services['error']
             ],400);
         }
 
@@ -75,7 +75,7 @@ class User_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'message' => $user_services['error']
             ],400);
         }
 
@@ -87,6 +87,8 @@ class User_controller
         return;
     }
 
+    
+
     public function update(Request $request, Response $response)
     {
         $authorization = $request::authorization();
@@ -97,7 +99,7 @@ class User_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'message' => $user_services['error']
             ],400);
         }
 
@@ -118,7 +120,7 @@ class User_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'message' => $user_services['error']
             ],400);
         }
 
@@ -140,7 +142,7 @@ class User_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'message' => $user_services['error']
             ],400);
         }
 
@@ -160,7 +162,7 @@ class User_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $user_services['error']
+                'message' => $user_services['error']
             ],400);
         }
 

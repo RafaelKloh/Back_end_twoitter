@@ -95,7 +95,7 @@ class User_service
             if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
         }
         catch(Exception $e){
-            return ['eeor' => $e->getMessage()];
+            return ['error' => $e->getMessage()];
         }
     }
 

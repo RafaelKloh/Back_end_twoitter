@@ -74,7 +74,7 @@ Class User_model extends Database
             'id' => $user['user_id'],
             'name' => $user['name'],
             'email' => $user['email'],
-            'verification_code' =>['verification_code']
+            'verification_code' => $user['verification_code']
         ];
     }
 
@@ -90,6 +90,8 @@ Class User_model extends Database
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+   
 
     public static function update(int|string $id, array $data)
     {

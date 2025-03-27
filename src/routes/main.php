@@ -16,6 +16,7 @@ Route::post('/users/verify_email', 'User_controller@verifyEmail');
 
 //Rotas de Post
 Route::post('/post/create', 'post_controller@create');
+Route::get('/post/for_you', 'post_controller@for_you');
 Route::post('/post/fetch', 'post_controller@fetch');
 Route::post('/post/fetch_tag', 'post_controller@fetch_tag');
 Route::put('/post/update', 'post_controller@update');

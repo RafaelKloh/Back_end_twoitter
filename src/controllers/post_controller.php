@@ -19,7 +19,7 @@ class Post_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $post_service['error']
+                'message' => $post_service['error']
             ],400);
         }
 
@@ -45,7 +45,7 @@ class Post_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $post_service['error']
+                'message' => $post_service['error']
             ],400);
         }
 
@@ -53,6 +53,28 @@ class Post_controller
             'error' => false,
             'success' => true,
             'jwt' => $post_service
+        ], 200);
+        return;
+    }
+
+    public function for_you(Request $request, Response $response)
+    {
+        $authorization = $request::authorization();
+
+        $user_services = Post_service::for_you($authorization);
+
+        if(isset($user_services['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'message' => $user_services['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'jwt' => $user_services
         ], 200);
         return;
     }
@@ -69,7 +91,7 @@ class Post_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $post_service['error']
+                'message' => $post_service['error']
             ],400);
         }
 
@@ -91,7 +113,7 @@ class Post_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $post_service['error']
+                'message' => $post_service['error']
             ],400);
         }
 
@@ -113,7 +135,7 @@ class Post_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $post_service['error']
+                'message' => $post_service['error']
             ],400);
         }
 
@@ -135,7 +157,7 @@ class Post_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $post_service['error']
+                'message' => $post_service['error']
             ],400);
         }
 
@@ -156,7 +178,7 @@ class Post_controller
             return $response::json([
                 'error' => true,
                 'success' => false,
-                'mesage' => $post_service['error']
+                'message' => $post_service['error']
             ],400);
         }
 

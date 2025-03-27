@@ -11,7 +11,7 @@ Class Not_found_controller
         $reponse::json([
             'error' => true,
             'success' => false,
-            'mesage' => 'Sorry, route not foud'
+            'message' => 'Sorry, route not foud'
         ], 404);
         return;
     }

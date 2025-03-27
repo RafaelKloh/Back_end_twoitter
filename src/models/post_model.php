@@ -59,6 +59,20 @@ Class Post_model extends Database
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function for_you()
+    {
+        $pdo = self::get_connection();
+
+        $stmt = $pdo->prepare('
+            SELECT * FROM post
+        ');
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
     public static function find_tag(string $search){
         $pdo = self::get_connection();
 

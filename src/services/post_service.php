@@ -74,6 +74,32 @@ class Post_service
         }
     }
 
+    public static function for_you(mixed $authorization)
+    {
+        try {
+
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+
+            $user = Post_model::for_you();
+
+            if(!$user) return ['error' => 'Sorry, we couldnot find your account.'];
+
+            return $user;
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
+
     public static function fetch_tag(mixed $authorization, string $search)
     {
         try {
