@@ -71,6 +71,28 @@ class User_service
             return ['error' => $e->getMessage()];
         }
     }
+    public static function verifyProfileById(mixed $authorization, array $data)
+    {
+        try {
+            if(isset($authorization['error'])){
+                return ['error' => $authorization['error']];
+            }
+
+            $user_from_JWT = JWT::verify($authorization);
+
+            if(!$user_from_JWT) return ['error' => 'User not logged.'];
+            
+            $fields = Validator::validate([
+                'userId' => $data['userId'] ?? ''
+            ])
+
+            $user = User_Model::findProfilePicture($fields['userId'])
+
+
+        } catch (Exception $e) {
+            return ['error' => $e->getMessage()]
+        }
+    }
 
     
 

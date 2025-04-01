@@ -36,6 +36,27 @@ class User_controller
     echo json_encode(User_service::verifyEmail($request->all()));
     exit;
 }
+    public function verifyProfile(Request $request)
+{
+    $authorization = $request::authorization();
+    $body = $request::body();
+        $user_services = User_service::verifyProfileById($authorization, $body);
+
+        if(isset($user_services['error'])){
+            return $response::json([
+                'error' => true,
+                'success' => false,
+                'message' => $user_services['error']
+            ],400);
+        }
+
+        $response::json([
+            'error' => false,
+            'success' => true,
+            'jwt' => $user_services
+        ], 200);
+        return;
+}
 
     
     

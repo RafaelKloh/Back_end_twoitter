@@ -41,6 +41,18 @@ Class User_model extends Database
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public static function findProfilePicture($userId)
+    {
+        $pdo = self::get_connection();
+
+        $stmt = $pdo->prepare(`
+            SELECT profile_picture_url FROM user WHERE user_id = ?
+        `);
+
+        $stmt->execute([$userId]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     public static function update_code($id)
     {

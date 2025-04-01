@@ -11,7 +11,8 @@ Route::put('/users/update', 'user_controller@update');
 Route::delete('/users/delete', 'user_controller@remove');
 Route::post('/users/register_follower', 'user_controller@register_follower');
 
-//Rota de validação do email
+//Rotas de validação
+Route::post('/users/verify_profile_picture' 'User_controller@verifyProfile')
 Route::post('/users/verify_email', 'User_controller@verifyEmail');
 
 //Rotas de Post
