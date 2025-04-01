@@ -14,6 +14,7 @@ Route::post('/users/register_follower', 'user_controller@register_follower');
 //Rotas de validação
 Route::post('/users/verify_profile_picture' 'User_controller@verifyProfile')
 Route::post('/users/verify_email', 'User_controller@verifyEmail');
+Route::post('/users/fetch_verify_email', 'User_controller@fetch_verify_email');
 
 //Rotas de Post
 Route::post('/post/create', 'post_controller@create');

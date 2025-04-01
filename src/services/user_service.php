@@ -18,11 +18,11 @@ class User_service
                 'email' => $data['email'] ?? '',
                 'password' => $data['password'] ?? '',
                 'sex' => $data['sex'] ?? '',
-                'profile_picture_url'=> $data['profile_picture_url'] ?? '',
-                'bio' => $data['bio'] ?? '',
                 'user_birth_date' => $data['user_birth_date'] ?? '',
                 'user_creation_date' => $data['user_creation_date'] ?? ''
             ]);
+            $bio =$data['bio'];
+            $profile_img = $data['profile_img'];
 
             $fields['password'] = password_hash($fields['password'], PASSWORD_DEFAULT);
 
@@ -30,7 +30,7 @@ class User_service
             //gera o codigo de verificação aleatório pra api
             $verification_code = rand(100000, 999999);
     
-            $user = User_model::save($fields, $verification_code);
+            $user = User_model::save($fields, $verification_code,$bio,$profile_img);
     
             if (!$user) {
                 return ['error' => 'Sorry, we could not create your account.'];
@@ -50,6 +50,8 @@ class User_service
         }
     }
 
+
+    
     public static function verifyEmail(array $data)
     {
         try {
@@ -116,6 +118,24 @@ class User_service
         } catch (PDOException $e) {
             if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
         }
+        catch(Exception $e){
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+
+    public static function fetch_verify_email(array $data)
+    {
+        try {
+            $user = User_model::fetch_verify_email($data);
+
+            if(!$user) return ['error' => 'Sorry, we couldnot find your account.'];
+
+            return $user;
+        } catch (PDOException $e) {
+            if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
+        }
+
         catch(Exception $e){
             return ['error' => $e->getMessage()];
         }

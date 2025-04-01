@@ -30,6 +30,7 @@ class User_controller
         ], 201);
     }
 
+
     public function verifyEmail(Request $request)
 {
     header('Content-Type: application/json');
@@ -59,7 +60,26 @@ class User_controller
 }
 
     
-    
+public function fetch_verify_email(Request $request, Response $response)
+{
+    $body = $request::body();
+    $user_services = User_service::fetch_verify_email($body);
+
+    if(isset($user_services['error'])){
+        return $response::json([
+            'error' => true,
+            'success' => false,
+            'message' => $user_services['error']
+        ],400);
+    }
+
+    $response::json([
+        'error' => false,
+        'success' => true,
+        'jwt' => $user_services
+    ], 200);
+    return;
+}
 
 
     public function login(Request $request, Response $response)

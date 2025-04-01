@@ -6,7 +6,7 @@ use App\Models\Database;
 use PDO;
 Class User_model extends Database
 {
-    public static function save(array $data, int|string $verification_code){
+    public static function save(array $data, string|int $verification_code, string $bio, string $profile_img){
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare("
@@ -19,8 +19,8 @@ Class User_model extends Database
             $data['email'],
             $data['password'],
             $data['sex'],
-            $data['profile_picture_url'],
-            $data['bio'],
+            $profile_img,
+            $bio,
             $data['user_birth_date'],
             $data['user_creation_date'],
             $verification_code
@@ -86,6 +86,26 @@ Class User_model extends Database
             'id' => $user['user_id'],
             'name' => $user['name'],
             'email' => $user['email'],
+            'verification_code' => $user['verification_code']
+        ];
+    }
+
+    public static function fetch_verify_email(array $data)
+    {
+        $pdo = self::get_connection();
+
+        $stmt = $pdo->prepare("
+            SELECT verification_code FROM user WHERE email = ?
+        ");
+        $stmt->execute([$data['email']]);
+
+        if($stmt->rowCount() < 1) return false;
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+       
+
+        return [
             'verification_code' => $user['verification_code']
         ];
     }
