@@ -85,16 +85,42 @@ class User_service
             if(!$user_from_JWT) return ['error' => 'User not logged.'];
             
             $fields = Validator::validate([
-                'userId' => $data['userId'] ?? ''
-            ])
+                'user_id' => $data['user_id'] ?? ''
+            ]);
 
-            $user = User_Model::findProfilePicture($fields['userId'])
+            $user = User_Model::findProfilePicture($fields['user_id']);
 
 
         } catch (Exception $e) {
-            return ['error' => $e->getMessage()]
+            return ['error' => $e->getMessage()];
         }
     }
+
+    public static function update_profile_image($data)
+    {
+        var_dump($data); // Verifica o que está sendo recebido
+        
+        // Aqui você pode fazer a verificação para garantir que os dados são um array
+        if (!is_array($data)) {
+            return ['error' => 'Invalid data format.'];
+        }
+    
+        // Agora podemos acessar corretamente
+        $user_id = $data['user_id'];
+        $profile_img = $data['profile_picture'];
+    
+        var_dump($user_id, $profile_img); // Verifica se estamos recebendo os dados corretos
+    
+        $update_result = User_model::update_profile_image($user_id, $profile_img);
+    
+        if (!$update_result) {
+            return ['error' => 'Error updating profile image.'];
+        }
+    
+        return ['success' => 'Profile image updated successfully.'];
+    }
+    
+
 
     
 

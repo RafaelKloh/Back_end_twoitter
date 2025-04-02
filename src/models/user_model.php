@@ -29,6 +29,27 @@ Class User_model extends Database
         return $pdo->lastInsertId() > 0 ? true : false;
     }
 
+    
+
+    public static function update_profile_image( int|string $user_id, $img)
+    {
+        $pdo = self::get_connection();
+
+        $stmt = $pdo->prepare("UPDATE user SET profile_picture_url = ? WHERE user_id = ?");
+       
+        $stmt->execute([
+            $img,
+            $user_id
+        ]);
+
+        var_dump($stmt);
+        if ($stmt->rowCount() > 0) {
+            return ['success' => true];
+        } else {
+            return ['error' => 'No changes made or user not found.'];
+        }
+    }
+
     public static function findByEmail($email)
     {
         $pdo = self::get_connection();
@@ -45,9 +66,9 @@ Class User_model extends Database
     {
         $pdo = self::get_connection();
 
-        $stmt = $pdo->prepare(`
+        $stmt = $pdo->prepare('
             SELECT profile_picture_url FROM user WHERE user_id = ?
-        `);
+        ');
 
         $stmt->execute([$userId]);
 

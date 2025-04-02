@@ -36,6 +36,19 @@ Class Request{
     return json_decode(file_get_contents('php://input'), true) ?? [];
 }
 
+public static function file($key) {
+    if (isset($_FILES[$key])) {
+        return $_FILES[$key];
+    }
+    return null;
+}
+
+public static function getParam($key)
+{
+    $body = self::body();
+    return $body[$key] ?? null; // Retorna o valor do parâmetro ou null se não existir
+}
+
 
 
 

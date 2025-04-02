@@ -10,9 +10,11 @@ Route::get('/users/get_info', 'user_controller@get_info');
 Route::put('/users/update', 'user_controller@update');
 Route::delete('/users/delete', 'user_controller@remove');
 Route::post('/users/register_follower', 'user_controller@register_follower');
+Route::post('/users/upload_profile', 'User_controller@upload_profile_image');
+
 
 //Rotas de validação
-Route::post('/users/verify_profile_picture' 'User_controller@verifyProfile')
+Route::post('/users/verify_profile_picture', 'User_controller@verifyProfile');
 Route::post('/users/verify_email', 'User_controller@verifyEmail');
 Route::post('/users/fetch_verify_email', 'User_controller@fetch_verify_email');
 
