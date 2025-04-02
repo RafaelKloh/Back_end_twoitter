@@ -66,9 +66,9 @@ class User_service
                 return ['error' => 'Invalid verification code.'];
             }
             
-            User_model::update_code($user['user_id']);
+            User_model::update_code($user['id']);
 
-            return "Email verified successfully!";
+            return ['user_id' => $user['id'],  'message' => 'Email verified successfully!'];
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
@@ -98,20 +98,17 @@ class User_service
 
     public static function update_profile_image($data)
     {
-        var_dump($data); // Verifica o que está sendo recebido
         
-        // Aqui você pode fazer a verificação para garantir que os dados são um array
         if (!is_array($data)) {
             return ['error' => 'Invalid data format.'];
         }
     
-        // Agora podemos acessar corretamente
+     
         $user_id = $data['user_id'];
         $profile_img = $data['profile_picture'];
-    
-        var_dump($user_id, $profile_img); // Verifica se estamos recebendo os dados corretos
-    
-        $update_result = User_model::update_profile_image($user_id, $profile_img);
+        $bio = $data['bio'];
+        
+        $update_result = User_model::update_profile_image($user_id, $profile_img,$bio);
     
         if (!$update_result) {
             return ['error' => 'Error updating profile image.'];
@@ -119,6 +116,23 @@ class User_service
     
         return ['success' => 'Profile image updated successfully.'];
     }
+
+    
+    public static function register_bio($data)
+    {
+        $bio = $data['bio'];
+        $user_id = $data['user_id'];
+
+
+        $user = User_model::register_bio($bio,$user_id);
+    
+        if (!$user) {
+            return ['error' => 'Error registering your bio.'];
+        }
+    
+        return ['success' => 'Bio registering successfully.'];
+    }
+    
     
 
 

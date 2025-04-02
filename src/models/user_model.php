@@ -31,18 +31,38 @@ Class User_model extends Database
 
     
 
-    public static function update_profile_image( int|string $user_id, $img)
+    public static function update_profile_image( int|string $user_id, $img, string $bio)
     {
         $pdo = self::get_connection();
 
-        $stmt = $pdo->prepare("UPDATE user SET profile_picture_url = ? WHERE user_id = ?");
+        
+        $stmt = $pdo->prepare("UPDATE user SET profile_picture_url = ?, bio = ? WHERE user_id = ?");
        
         $stmt->execute([
             $img,
+            $bio,
             $user_id
         ]);
 
-        var_dump($stmt);
+        if ($stmt->rowCount() > 0) {
+            return ['success' => true];
+        } else {
+            return ['error' => 'No changes made or user not found.'];
+        }
+    }
+
+    public static function register_bio(string $bio, int|string $user_id)
+    {
+        $pdo = self::get_connection();
+
+        
+        $stmt = $pdo->prepare("UPDATE user SET bio = ? WHERE user_id = ?");
+       
+        $stmt->execute([
+            $bio,
+            $user_id
+        ]);
+
         if ($stmt->rowCount() > 0) {
             return ['success' => true];
         } else {
@@ -60,7 +80,12 @@ Class User_model extends Database
 
         $stmt->execute([$email]);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            'id' => $user['user_id'],
+            'verification_code' => $user['verification_code']
+        ];
     }
     public static function findProfilePicture($userId)
     {
@@ -85,7 +110,9 @@ Class User_model extends Database
 
         $stmt->execute([$id]);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return[$user];
     }
 
     public static function authentication(array $data)

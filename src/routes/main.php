@@ -11,6 +11,7 @@ Route::put('/users/update', 'user_controller@update');
 Route::delete('/users/delete', 'user_controller@remove');
 Route::post('/users/register_follower', 'user_controller@register_follower');
 Route::post('/users/upload_profile', 'User_controller@upload_profile_image');
+Route::post('/users/register_bio', 'User_controller@register_bio');
 
 
 //Rotas de validação
