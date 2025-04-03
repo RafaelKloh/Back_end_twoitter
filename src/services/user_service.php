@@ -154,7 +154,7 @@ class User_service
                 return ['error' => 'Unverified user, check your email and validate your account.'];
             }
 
-            return JWT::generate($user);
+            return [JWT::generate($user),['user_id' => $user['id']]]; 
         } catch (PDOException $e) {
             if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
         }

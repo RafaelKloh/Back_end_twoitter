@@ -60,7 +60,6 @@ class Post_controller
     public function for_you(Request $request, Response $response)
     {
         $authorization = $request::authorization();
-
         $user_services = Post_service::for_you($authorization);
 
         if(isset($user_services['error'])){

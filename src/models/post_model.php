@@ -59,17 +59,24 @@ Class Post_model extends Database
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function for_you()
+    public static function for_you($limit,$offset)
     {
+
+        
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare('
             SELECT * FROM post
+            ORDER BY post_id DESC
+            LIMIT :limit OFFSET :offset
         ');
-
+        
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-
+        
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
     }
 
 

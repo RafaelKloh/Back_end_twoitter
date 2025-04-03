@@ -77,7 +77,8 @@ class Post_service
     public static function for_you(mixed $authorization)
     {
         try {
-
+            $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+            $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
             if(isset($authorization['error'])){
                 return ['error' => $authorization['error']];
             }
@@ -86,7 +87,7 @@ class Post_service
 
             if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
 
-            $user = Post_model::for_you();
+            $user = Post_model::for_you($limit,$offset);
 
             if(!$user) return ['error' => 'Sorry, we couldnot find your account.'];
 
