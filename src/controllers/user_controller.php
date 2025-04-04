@@ -63,7 +63,7 @@ public function upload_profile_image(Request $request, Response $response, array
         $upload_path = $upload_dir . $file_name;
 
         if (move_uploaded_file($file_tmp, $upload_path)) {
-            $image_url = '/uploads/profile_pictures/' . $file_name;
+            $image_url = $file_name;
 
             $user_id = $_POST['user_id'] ?? null; 
             $bio = $_POST['bio'] ?? null;
