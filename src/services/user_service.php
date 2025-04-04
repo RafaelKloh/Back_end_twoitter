@@ -103,10 +103,11 @@ class User_service
             return ['error' => 'Invalid data format.'];
         }
     
-     
         $user_id = $data['user_id'];
         $profile_img = $data['profile_picture'];
         $bio = $data['bio'];
+
+        var_dump($profile_img);
         
         $update_result = User_model::update_profile_image($user_id, $profile_img,$bio);
     

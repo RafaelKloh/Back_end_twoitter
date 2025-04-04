@@ -66,7 +66,7 @@ Class Post_model extends Database
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare('
-            SELECT p.*, u.* FROM post as p, user as u WHERE (p.user_id = u.user_id);
+            SELECT p.*, u.* FROM post as p, user as u WHERE (p.user_id = u.user_id)
             ORDER BY post_id DESC
             LIMIT :limit OFFSET :offset
         ');
@@ -187,8 +187,13 @@ Class Post_model extends Database
         $tanned = $stmt1->fetchColumn();
 
         if($tanned){
-        return false;
+            $stmt_delete = $pdo->prepare('DELETE FROM `like` WHERE post_id = ? and user_id = ?');
+            $stmt_delete->execute([
+                $data['post_id'],
+                $id]);
+            return 'deleted';
         }
+        else{
             $stmt2 = $pdo->prepare('INSERT INTO `like` (post_id,user_id,liked_at)
             VALUES (?,?,?)');
     
@@ -198,6 +203,7 @@ Class Post_model extends Database
                 $data['liked_at']
             ]);
             $resp = $pdo->lastInsertId();
+        
 
         if ($stmt2->rowCount() > 0) {
             $stmt3 = $pdo->prepare('INSERT INTO `notification` (type_notification, user_id, notification_message, notification_at, notification_read)
@@ -211,5 +217,6 @@ Class Post_model extends Database
                 ]);
                 return "Notification generated";
             }
+        }
     }
 }

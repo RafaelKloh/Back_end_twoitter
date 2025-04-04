@@ -31,7 +31,6 @@ class Post_service
 
             $post = Post_model::create($user_from_JWT['id'], $fields);
 
-    
             if (!$post) {
                 return ['error' => 'Sorry, we could not create your post.'];
             }
@@ -234,8 +233,13 @@ class Post_service
             $post = Post_model::register_like($user_from_JWT['id'], $fields);
 
             
+            
             if (!$post) {
                 return ['error' => 'Sorry, we could not register your like.'];
+            }
+
+            if($post == "deleted"){
+                return "like deleted successfuly!";
             }
     
             return "Like registered successfully!";

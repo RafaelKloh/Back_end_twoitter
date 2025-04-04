@@ -9,26 +9,52 @@ use App\Services\Post_service;
 class Post_controller
 {
     
-    public function create(Request $request, Response $response)
-    {
-        $authorization = $request::authorization();
-        $body = $request::body();
-        $post_service = Post_service::create($authorization,$body);
+    public function create(Request $request, Response $response, array $args)
+{
+    $authorization = $request::authorization();
+    if (isset($_FILES['img_post']) && $_FILES['img_post']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = __DIR__ . '/../../public/uploads/img_posts/';
 
-        if(isset($post_service['error'])){
-            return $response::json([
-                'error' => true,
-                'success' => false,
-                'message' => $post_service['error']
-            ],400);
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true); 
         }
 
-        $response::json([
-            'error' => false,
-            'success' => true,
-            'data' => $post_service
-        ], 201);
+        $file_tmp = $_FILES['img_post']['tmp_name'];
+        $file_name = uniqid() . "_" . basename($_FILES['img_post']['name']);
+        $upload_path = $upload_dir . $file_name;
+
+        if (move_uploaded_file($file_tmp, $upload_path)) {
+            $image_url = $file_name;
+
+            $tags = $_POST['tags'] ?? null;
+            $text_post = $_POST['text_post'] ?? null;
+            $posted_at = $_POST['posted_at'] ?? null;
+
+            if ($user_id) {
+                $update_result = Post_service::create([
+                    'img_post' => $image_url,
+                    'text_post' => $text_post,
+                    'posted_at' => $posted_at,
+                    $authorization
+                ]);
+                if ($update_result['success']) {
+                    return $response->json([
+                        'error' => false,
+                        'success' => true,
+                        'message' => 'Imagem de perfil atualizada com sucesso!',
+                        'image_url' => $image_url
+                    ]);
+                } else {
+                    return $response->json([
+                        'error' => true,
+                        'success' => false,
+                        'message' => $update_result['error']
+                    ]);
+                }
     }
+}
+    }
+}
 
     
 
