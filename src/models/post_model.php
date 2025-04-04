@@ -66,7 +66,7 @@ Class Post_model extends Database
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare('
-            SELECT * FROM post
+            SELECT p.*, u.* FROM post as p, user as u WHERE (p.user_id = u.user_id);
             ORDER BY post_id DESC
             LIMIT :limit OFFSET :offset
         ');
