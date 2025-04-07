@@ -21,6 +21,8 @@ Class Post_model extends Database
             $data['posted_at']
         ]);
 
+        var_dump($data);
+
         $post_id = $pdo->lastInsertId();
 
         if(!empty($data['tags']))

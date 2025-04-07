@@ -49,7 +49,7 @@ class User_controller
         'data' => $user_services
     ], 201);
 }
-public function upload_profile_image(Request $request, Response $response, array $args)
+public function upload_profile_image(Response $response)
 {
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
         $upload_dir = __DIR__ . '/../../public/uploads/profile_pictures/';
@@ -113,7 +113,7 @@ public function upload_profile_image(Request $request, Response $response, array
 
 
 
-    public function verifyProfile(Request $request)
+    public function verifyProfile(Request $request, Response $response)
 {
     $authorization = $request::authorization();
     $body = $request::body();

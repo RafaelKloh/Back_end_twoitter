@@ -38,7 +38,6 @@ Class User_model extends Database
         
         $stmt = $pdo->prepare("UPDATE user SET profile_picture_url = ?, bio = ? WHERE user_id = ?");
        
-        var_dump($img);
         $stmt->execute([
             $img,
             $bio,

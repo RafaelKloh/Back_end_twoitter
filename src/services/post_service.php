@@ -12,6 +12,7 @@ class Post_service
 {
     public static function create(mixed $authorization,array $data)
     {
+        
         try {
             if(isset($authorization['error'])){
                 return ['error' => $authorization['error']];
@@ -20,6 +21,7 @@ class Post_service
             $user_from_JWT = JWT::verify($authorization);
 
             if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
+
 
             $fields = Validator::validate([
                 'text_post' => $data['text_post'] ?? '',

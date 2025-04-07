@@ -107,9 +107,8 @@ class User_service
         $profile_img = $data['profile_picture'];
         $bio = $data['bio'];
 
-        var_dump($profile_img);
         
-        $update_result = User_model::update_profile_image($user_id, $profile_img,$bio);
+        $update_result = User_model::update_profile_image($user_id, $data['profile_picture'],$bio);
     
         if (!$update_result) {
             return ['error' => 'Error updating profile image.'];
