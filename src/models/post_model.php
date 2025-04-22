@@ -21,7 +21,6 @@ Class Post_model extends Database
             $data['posted_at']
         ]);
 
-        var_dump($data);
 
         $post_id = $pdo->lastInsertId();
 
@@ -63,13 +62,21 @@ Class Post_model extends Database
 
     public static function for_you($limit,$offset)
     {
-
-        
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare('
-            SELECT p.*, u.* FROM post as p, user as u WHERE (p.user_id = u.user_id)
-            ORDER BY post_id DESC
+            SELECT 
+    p.post_id,
+    p.text_post,
+    p.image_post,
+    p.posted_at,
+    u.user_id,
+    u.name,
+    u.profile_picture_url
+FROM post p
+INNER JOIN user u ON p.user_id = u.user_id
+ORDER BY p.post_id DESC
+
             LIMIT :limit OFFSET :offset
         ');
         

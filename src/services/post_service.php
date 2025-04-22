@@ -36,8 +36,9 @@ class Post_service
             if (!$post) {
                 return ['error' => 'Sorry, we could not create your post.'];
             }
-    
-            return "Post created successfully!";
+            
+
+            return $post;
         } 
         catch (PDOException $e) {
             if($e->getCode() === 1049) return ['error' => 'Sorry, we could not connect to the database'];
@@ -78,7 +79,7 @@ class Post_service
     public static function for_you(mixed $authorization)
     {
         try {
-            $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+            $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 2;
             $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
             if(isset($authorization['error'])){
                 return ['error' => $authorization['error']];
