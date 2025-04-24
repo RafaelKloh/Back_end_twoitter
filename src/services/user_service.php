@@ -184,7 +184,8 @@ class User_service
     public static function fetch(mixed $authorization, string $name)
     {
         try {
-
+            $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+            $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
             if(isset($authorization['error'])){
                 return ['error' => $authorization['error']];
             }
@@ -193,8 +194,8 @@ class User_service
 
             if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
 
-            $user = User_model::find($name);
-
+            $user = User_model::find($name,$limit,$offset);
+       
             if(!$user) return ['error' => 'Sorry, we couldnot find your account.'];
 
             return $user;

@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\Database;
 use PDO;
-Class User_model extends Database
+
+class User_model extends Database
 {
-    public static function save(array $data, string|int $verification_code, string $bio, string $profile_img){
+    public static function save(array $data, string|int $verification_code, string $bio, string $profile_img)
+    {
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare("
@@ -29,15 +31,15 @@ Class User_model extends Database
         return $pdo->lastInsertId() > 0 ? true : false;
     }
 
-    
 
-    public static function update_profile_image( int|string $user_id, $img, string $bio)
+
+    public static function update_profile_image(int|string $user_id, $img, string $bio)
     {
         $pdo = self::get_connection();
 
-        
+
         $stmt = $pdo->prepare("UPDATE user SET profile_picture_url = ?, bio = ? WHERE user_id = ?");
-       
+
         $stmt->execute([
             $img,
             $bio,
@@ -55,9 +57,9 @@ Class User_model extends Database
     {
         $pdo = self::get_connection();
 
-        
+
         $stmt = $pdo->prepare("UPDATE user SET bio = ? WHERE user_id = ?");
-       
+
         $stmt->execute([
             $bio,
             $user_id
@@ -112,7 +114,7 @@ Class User_model extends Database
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return[$user];
+        return [$user];
     }
 
     public static function authentication(array $data)
@@ -124,11 +126,11 @@ Class User_model extends Database
         ");
         $stmt->execute([$data['email']]);
 
-        if($stmt->rowCount() < 1) return false;
+        if ($stmt->rowCount() < 1) return false;
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if(!password_verify($data['password'], $user['password'])) return false;
+        if (!password_verify($data['password'], $user['password'])) return false;
 
         return [
             'id' => $user['user_id'],
@@ -147,31 +149,38 @@ Class User_model extends Database
         ");
         $stmt->execute([$data['email']]);
 
-        if($stmt->rowCount() < 1) return false;
+        if ($stmt->rowCount() < 1) return false;
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-       
+
 
         return [
             'verification_code' => $user['verification_code']
         ];
     }
 
-    public static function find(int|string $name)
+    public static function find(int|string $name, $limit, $offset)
     {
         $pdo = self::get_connection();
 
         $stmt = $pdo->prepare('
-            SELECT name, email, profile_picture_url, bio, user_birth_date, user_creation_date FROM user WHERE name = ?
+            SELECT * FROM user WHERE name like :name
+            ORDER BY name DESC
+
+            LIMIT :limit OFFSET :offset;
         ');
+        $search = "%$name%";
 
-        $stmt->execute([$name]);
+        $stmt->bindValue(':name', $search, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-   
+
 
     public static function update(int|string $id, array $data)
     {
@@ -181,7 +190,7 @@ Class User_model extends Database
             UPDATE user SET name = ? WHERE user_id = ?
         ');
 
-        $stmt->execute([$data['name'],$id]);
+        $stmt->execute([$data['name'], $id]);
 
         return $stmt->rowCount() > 0 ? true : false;
     }
@@ -197,17 +206,16 @@ Class User_model extends Database
         $stmt->execute([$id]);
 
         return $stmt->rowCount() > 0 ? true : false;
-
     }
 
     public static function register_follower(int|string $id, array $data)
-{
+    {
         $pdo = self::get_connection();
 
         // Verifica se o usuário já segue o outro
         $stmt1 = $pdo->prepare('SELECT user_follower_id FROM follower WHERE user_follower_id = ? AND user_followed_id = ?');
         $stmt1->execute([
-            $id, 
+            $id,
             $data['user_followed_id']
         ]);
         $following = $stmt1->fetchColumn();
@@ -241,7 +249,7 @@ Class User_model extends Database
         return false;
     }
 
-public static function get_info(int|string $id)
+    public static function get_info(int|string $id)
     {
         $pdo = self::get_connection();
 
@@ -252,7 +260,5 @@ public static function get_info(int|string $id)
         $stmt->execute([$id]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
-
     }
-
 }
