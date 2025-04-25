@@ -48,14 +48,29 @@ Class Post_model extends Database
         return $pdo->lastInsertId() > 0 ? true : false;
     }
 
-    public static function find(string $search){
+    public static function find(string $search,$limit,$offset){
         $pdo = self::get_connection();
 
-        $stmt = $pdo->prepare('SELECT text_post , image_post
-        FROM post 
-        WHERE text_post LIKE ?');
+        $stmt = $pdo->prepare('SELECT 
+    p.post_id,
+    p.text_post,
+    p.image_post,
+    p.posted_at,
+    u.user_id,
+    u.name,
+    u.profile_picture_url
+FROM post p
+INNER JOIN user u ON p.user_id = u.user_id
+WHERE p.text_post LIKE :search
+ORDER BY p.post_id DESC
 
-        $stmt->execute(["%$search%"]);
+            LIMIT :limit OFFSET :offset');
+        $search = "%$search%";
+
+$stmt->bindValue(':search', $search, PDO::PARAM_STR);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

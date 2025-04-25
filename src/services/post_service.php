@@ -52,7 +52,8 @@ class Post_service
     public static function fetch(mixed $authorization, string $search)
     {
         try {
-
+            $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
+            $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
             if(isset($authorization['error'])){
                 return ['error' => $authorization['error']];
             }
@@ -62,7 +63,7 @@ class Post_service
             if(!$user_from_JWT) return ['error' => 'Please, login to access this resource.'];
             if($search === "") return ['error' => 'Please enter a valid text to search'];
 
-            $post = Post_model::find($search);
+            $post = Post_model::find($search,$limit,$offset);
 
             if(!$post) return ['error' => 'Sorry, we could not find a post with this text.'];
 
@@ -79,7 +80,7 @@ class Post_service
     public static function for_you(mixed $authorization)
     {
         try {
-            $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 2;
+            $limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
             $offset = isset($_GET['offset']) ? (int) $_GET['offset'] : 0;
             if(isset($authorization['error'])){
                 return ['error' => $authorization['error']];
